@@ -5,6 +5,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 // One Product to Many CartItems
 
 // CartItem will have id, product, and int quantity
@@ -13,19 +15,25 @@ public class CartItem {
 
 	@Id
 	@GeneratedValue
-	private Long id;
+	private long id;
 
-	//One Product To Many CartItems
-	//Many CartItems with One Product
+	// One Product To Many CartItems
+	// Many CartItems with One Product
 	@ManyToOne
+	@JsonIgnore
 	private Product product;
 	private int quantityOfIndividualProduct;
+	@ManyToOne
+	@JsonIgnore
+	private ShoppingCart shoppingCart;
 
-	public CartItem(Product product, int quantityOfIndividualProduct) {
+	public CartItem(Product product, int quantityOfIndividualProduct, ShoppingCart cart) {
 		this.product = product;
 		this.quantityOfIndividualProduct = quantityOfIndividualProduct;
+		this.shoppingCart = cart;
 	}
-	public Long getId() {
+
+	public long getId() {
 		return id;
 	}
 
@@ -36,9 +44,27 @@ public class CartItem {
 	public int getQuantityOfIndividualProduct() {
 		return quantityOfIndividualProduct;
 	}
+
+	public ShoppingCart getShoppingCart() {
+		return shoppingCart;
+	}
+
+	public String getProductName() {
+		return product.getName();
+	}
 	
+	public double getLineItemTotal() {
+		double lineItemTotal = quantityOfIndividualProduct * getProduct().getPrice();
+		return lineItemTotal;
+	}
+
 	public CartItem() {
-		
+
+	}
+
+	@Override
+	public String toString() {
+		return product.getName() + ":" + quantityOfIndividualProduct;
 	}
 
 	@Override
